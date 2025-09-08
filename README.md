@@ -56,3 +56,7 @@ CLI builds
 - Run app: `make run`
 - Clean: `make clean`
 - Auto-build on changes (requires fswatch): `bash scripts/watch.sh`
+
+
+download from here: [SSHMacApp.zip](https://github.com/user-attachments/files/22217615/SSHMacApp.zip)
+
