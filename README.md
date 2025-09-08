@@ -4,6 +4,12 @@ Overview
 - SwiftUI macOS app to manage SSH-accessible devices on a LAN.
 - Features: device list with reachability status, SSH actions (shutdown/restart), open in Terminal, add devices (manual + Bonjour discovery), periodic status checks, SQLite persistence.
 
+
+<img width="727" height="684" alt="Home-Page" src="https://github.com/user-attachments/assets/ff0c0d0c-5507-4e35-84fa-42cbabc6c545" />
+
+<img width="905" height="496" alt="Device-Addition" src="https://github.com/user-attachments/assets/10203ed2-dee7-4641-a642-5af9caf95545" />
+
+
 How to use
 1) Open `SSHMacApp.xcodeproj` in Xcode.
 2) Select the `SSHMacApp` scheme and a My Mac destination.
