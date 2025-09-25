@@ -41,20 +41,30 @@ struct AddDeviceFlowView: View {
         .onDisappear { discovery.stop() }
     }
 
+    private var filteredDiscoveredDevices: [DiscoveredDevice] {
+        let existing = Set(repo.devices.map { "\(normalizeHost($0.host)):\($0.port)" })
+        return discovery.devices.filter { !existing.contains("\(normalizeHost($0.host)):\($0.port)") }
+    }
+
     private var sidebar: some View {
         List(selection: $selected) {
             Section("Discovered on LAN") {
-                ForEach(discovery.devices) { item in
+                ForEach(filteredDiscoveredDevices) { item in
                     VStack(alignment: .leading, spacing: 2) {
                         Text(item.name.isEmpty ? hostDisplay(item.host) : item.name)
                             .font(.body)
                             .lineLimit(1)
                             .truncationMode(.tail)
-                        Text("\(hostDisplay(item.host)):\(item.port)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
+                        HStack(spacing: 6) {
+                            Text("\(hostDisplay(item.host)):\(item.port)")
+                            if let ip = item.ip, ip != hostDisplay(item.host) { Text("• \(ip)") }
+                            Text("• \(item.source == .bonjour ? "Bonjour" : "Subnet")")
+                            if let ms = item.latencyMs { Text("• ~\(ms) ms") }
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                     }
                     .tag(item as DiscoveredDevice?)
                     .onTapGesture {
@@ -78,9 +88,13 @@ struct AddDeviceFlowView: View {
         host = item.host
         port = item.port
     }
+
+    private func normalizeHost(_ s: String) -> String {
+        let trimmed = s.hasSuffix(".") ? String(s.dropLast()) : s
+        return trimmed.lowercased()
+    }
 }
 
 private func hostDisplay(_ host: String) -> String {
     host.hasSuffix(".") ? String(host.dropLast()) : host
 }
-

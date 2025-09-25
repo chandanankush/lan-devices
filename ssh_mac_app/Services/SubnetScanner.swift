@@ -41,6 +41,7 @@ final class SubnetScanner {
         return hosts
     }
 
+    // Scan the subnet for SSH hosts. Now fills in additional fields: ip, source, latencyMs.
     func scanSSH(timeout: TimeInterval = 0.9, limit: Int? = nil) async -> [DiscoveredDevice] {
         guard let ip = primaryIPv4() else { return [] }
         var candidates = addressesIn24(ipv4: ip)
@@ -50,9 +51,13 @@ final class SubnetScanner {
         await withTaskGroup(of: DiscoveredDevice?.self) { group in
             for host in candidates {
                 group.addTask {
+                    let start = DispatchTime.now().uptimeNanoseconds
                     let status = await StatusChecker.check(host: host, port: 22, timeout: timeout)
+                    let end = DispatchTime.now().uptimeNanoseconds
+                    let elapsedNs = end &- start
+                    let ms = Int(Double(elapsedNs) / 1_000_000.0)
                     if status == .reachable {
-                        return DiscoveredDevice(name: host, host: host, port: 22)
+                        return DiscoveredDevice(name: host, host: host, port: 22, ip: host, source: .subnet, latencyMs: ms)
                     }
                     return nil
                 }
@@ -65,4 +70,3 @@ final class SubnetScanner {
         return found.sorted { $0.host < $1.host }
     }
 }
-

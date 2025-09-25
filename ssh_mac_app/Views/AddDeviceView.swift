@@ -94,11 +94,18 @@ struct AddDeviceView: View {
                     .font(.body)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                Text("\(hostDisplay(item.host)):\(item.port)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+                HStack(spacing: 6) {
+                    Text("\(hostDisplay(item.host)):\(item.port)")
+                    if let ip = item.ip, ip != hostDisplay(item.host) {
+                        Text("• \(ip)")
+                    }
+                    Text("• \(item.source == .bonjour ? "Bonjour" : "Subnet")")
+                    if let ms = item.latencyMs { Text("• ~\(ms) ms") }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
             }
             .contentShape(Rectangle())
             .onTapGesture {

@@ -1,10 +1,19 @@
 import Foundation
+import Darwin
+
+enum DiscoverySource: String, Codable, Hashable {
+    case bonjour
+    case subnet
+}
 
 struct DiscoveredDevice: Identifiable, Hashable {
     var id = UUID()
     var name: String
     var host: String
     var port: Int
+    var ip: String?
+    var source: DiscoverySource
+    var latencyMs: Int?
 }
 
 final class DiscoveryService: NSObject, ObservableObject {
@@ -56,6 +65,34 @@ final class DiscoveryService: NSObject, ObservableObject {
             }
         }
     }
+
+    private static func firstIPAddress(from addresses: [Data]?) -> String? {
+        guard let addresses, !addresses.isEmpty else { return nil }
+        for data in addresses {
+            let result: String? = data.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) in
+                guard let base = ptr.baseAddress else { return nil }
+                let sa = base.assumingMemoryBound(to: sockaddr.self).pointee
+                switch Int32(sa.sa_family) {
+                case AF_INET:
+                    let sin = base.assumingMemoryBound(to: sockaddr_in.self).pointee
+                    var addr = sin.sin_addr
+                    var buffer = [CChar](repeating: 0, count: Int(INET_ADDRSTRLEN))
+                    inet_ntop(AF_INET, &addr, &buffer, socklen_t(INET_ADDRSTRLEN))
+                    return String(cString: buffer)
+                case AF_INET6:
+                    let sin6 = base.assumingMemoryBound(to: sockaddr_in6.self).pointee
+                    var addr6 = sin6.sin6_addr
+                    var buffer = [CChar](repeating: 0, count: Int(INET6_ADDRSTRLEN))
+                    inet_ntop(AF_INET6, &addr6, &buffer, socklen_t(INET6_ADDRSTRLEN))
+                    return String(cString: buffer)
+                default:
+                    return nil
+                }
+            }
+            if let ip = result { return ip }
+        }
+        return nil
+    }
 }
 
 extension DiscoveryService: NetServiceBrowserDelegate, NetServiceDelegate {
@@ -78,7 +115,8 @@ extension DiscoveryService: NetServiceBrowserDelegate, NetServiceDelegate {
 
     func netServiceDidResolveAddress(_ sender: NetService) {
         guard let hostName = sender.hostName else { return }
-        let item = DiscoveredDevice(name: sender.name, host: hostName, port: sender.port)
+        let ip = Self.firstIPAddress(from: sender.addresses)
+        let item = DiscoveredDevice(name: sender.name, host: hostName, port: sender.port, ip: ip, source: .bonjour, latencyMs: nil)
         if devices.contains(where: { $0.host == item.host && $0.port == item.port }) == false {
             devices.append(item)
         }

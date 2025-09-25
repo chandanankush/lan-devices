@@ -29,6 +29,7 @@
 		A1B2C3D4E5F6010000000219 /* AddDeviceFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6010000000156 /* AddDeviceFormView.swift */; };
 		A1B2C3D4E5F6010000000220 /* AddDeviceFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6010000000157 /* AddDeviceFlowView.swift */; };
 		B52570F22E6F5D3F00C43BAC /* SudoPasswordPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52570F12E6F5D3F00C43BAC /* SudoPasswordPromptView.swift */; };
+		B54F410B2E8576FB0072D5C8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B54F410A2E8576FB0072D5C8 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,8 @@
 		A1B2C3D4E5F6010000000156 /* AddDeviceFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDeviceFormView.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6010000000157 /* AddDeviceFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDeviceFlowView.swift; sourceTree = "<group>"; };
 		B52570F12E6F5D3F00C43BAC /* SudoPasswordPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudoPasswordPromptView.swift; sourceTree = "<group>"; };
+		B54F41092E8575CE0072D5C8 /* IconGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconGenerator.swift; sourceTree = "<group>"; };
+		B54F410A2E8576FB0072D5C8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 				A1B2C3D4E5F6010000000035 /* Views */,
 				A1B2C3D4E5F6010000000037 /* Frameworks */,
 				A1B2C3D4E5F6010000000038 /* Products */,
+				B54F41092E8575CE0072D5C8 /* IconGenerator.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,6 +93,7 @@
 			children = (
 				A1B2C3D4E5F6010000000100 /* SSHMacAppApp.swift */,
 				A1B2C3D4E5F6010000000101 /* Info.plist */,
+				B54F410A2E8576FB0072D5C8 /* .gitignore */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -221,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B54F410B2E8576FB0072D5C8 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

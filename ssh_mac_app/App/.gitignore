@@ -1,0 +1,77 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# Xcode
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+*.xcuserdatad*
+*.xcuserdatad/**
+*.moved-aside
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+
+# Xcode project user data
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# CocoaPods
+Pods/
+*.xcworkspace
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Archives
+*.xcarchive
+
+# Logs
+*.log
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# User-specific files
+*.swp
+*.swo
+*.orig
+*.rej
+
+# Crash reports
+*.crash
+
+# Temporary files
+*.tmp
+*.temp
+
+# SwiftLint cache
+.swiftlint-cache
+
+# SPM Artifacts
+.artifacts/
+
+# Generated localization
+*.stringsdict
+
+# Build outputs
+build/
