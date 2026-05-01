@@ -11,16 +11,16 @@ struct SudoPasswordPromptView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Authentication Required").font(.title2).bold()
+            Text("Authentication Required").font(.title).bold()
             Text("Enter sudo password for \(device.username)@\(device.host)")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+                .font(.body)
+                .foregroundStyle(Color.primary.opacity(0.65))
             SecureField("Password", text: $password)
                 .textFieldStyle(.roundedBorder)
                 .frame(minWidth: 320)
             Toggle("Remember this password for this device", isOn: $remember)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+                .font(.callout)
+                .foregroundStyle(Color.primary.opacity(0.65))
             HStack {
                 Spacer()
                 Button("Cancel") { onCancel() }

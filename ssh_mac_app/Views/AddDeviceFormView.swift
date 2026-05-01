@@ -60,38 +60,39 @@ struct AddDeviceFormView: View {
         Form {
             LabeledContent("Name") {
                 TextField("server-pc", text: $name)
-                    .textFieldStyle(.roundedBorder)
+                    .styledField()
             }
             LabeledContent("Host/IP") {
                 TextField("192.168.0.10 or host.local", text: $host)
-                    .textFieldStyle(.roundedBorder)
+                    .styledField()
             }
             LabeledContent("Port") {
                 TextField("22", value: $port, formatter: portFormatter)
-                    .frame(width: 90)
+                    .styledField()
+                    .frame(width: 104)
             }
             LabeledContent("Username") {
                 TextField("user", text: $username)
-                    .textFieldStyle(.roundedBorder)
+                    .styledField()
             }
             Toggle("Use password authentication", isOn: $usePasswordAuth)
-                .lineLimit(2)
-                .padding(.top, 2)
+                .toggleStyle(AccessibleCheckbox())
+                .padding(.top, 6)
             if usePasswordAuth {
                 LabeledContent("Password") {
                     SecureField("Password", text: $password)
-                        .textFieldStyle(.roundedBorder)
+                        .styledField()
                 }
             } else {
                 LabeledContent("SSH Key Path") {
                     TextField("~/.ssh/id_rsa", text: $sshKeyPath)
-                        .textFieldStyle(.roundedBorder)
+                        .styledField()
                 }
             }
             Toggle("Trust host key on first connect", isOn: $acceptNewHostKey)
                 .help("Adds the server host key to known_hosts on first connection (OpenSSH accept-new).")
-                .lineLimit(2)
-                .padding(.top, 2)
+                .toggleStyle(AccessibleCheckbox())
+                .padding(.top, 6)
         }
     }
 
@@ -134,3 +135,56 @@ struct AddDeviceFormView: View {
     }
 }
 
+// MARK: - Private form styles
+
+private extension View {
+    // Replaces .roundedBorder with explicit background + high-contrast border.
+    // .roundedBorder border in dark mode is ~1.3:1 against the window — effectively invisible.
+    // This border renders at ~4.3:1 in both light and dark. (Color.primary.opacity(0.45))
+    func styledField() -> some View {
+        self
+            .textFieldStyle(.plain)
+            .padding(.vertical, 5)
+            .padding(.horizontal, 8)
+            .background(Color(nsColor: .controlBackgroundColor))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.primary.opacity(0.45), lineWidth: 1)
+            )
+    }
+}
+
+// Native macOS Toggle checkbox border in dark mode is ~1.3:1 — invisible unless focused.
+// This custom style draws a visible 1.5pt border at ~4.3:1 in both modes.
+private struct AccessibleCheckbox: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button { configuration.isOn.toggle() } label: {
+            HStack(spacing: 8) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(configuration.isOn
+                            ? Color.accentColor
+                            : Color(nsColor: .controlBackgroundColor))
+                        .frame(width: 18, height: 18)
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(
+                            configuration.isOn ? Color.accentColor : Color.primary.opacity(0.45),
+                            lineWidth: 1.5
+                        )
+                        .frame(width: 18, height: 18)
+                    if configuration.isOn {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .heavy))
+                            .foregroundStyle(.white)
+                    }
+                }
+                configuration.label
+                    .font(.body)
+                    .foregroundStyle(Color.primary)
+            }
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}

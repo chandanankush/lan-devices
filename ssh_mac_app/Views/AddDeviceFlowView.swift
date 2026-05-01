@@ -50,9 +50,9 @@ struct AddDeviceFlowView: View {
         List(selection: $selected) {
             Section("Discovered on LAN") {
                 ForEach(filteredDiscoveredDevices) { item in
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text(item.name.isEmpty ? hostDisplay(item.host) : item.name)
-                            .font(.body)
+                            .font(.headline)
                             .lineLimit(1)
                             .truncationMode(.tail)
                         HStack(spacing: 6) {
@@ -61,8 +61,8 @@ struct AddDeviceFlowView: View {
                             Text("• \(item.source == .bonjour ? "Bonjour" : "Subnet")")
                             if let ms = item.latencyMs { Text("• ~\(ms) ms") }
                         }
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
+                        .foregroundStyle(Color.primary.opacity(0.65))
                         .lineLimit(1)
                         .truncationMode(.middle)
                     }
@@ -85,7 +85,7 @@ struct AddDeviceFlowView: View {
 
     private func prefill(with item: DiscoveredDevice) {
         name = item.name.isEmpty ? hostDisplay(item.host) : item.name
-        host = item.host
+        host = hostDisplay(item.host)
         port = item.port
     }
 

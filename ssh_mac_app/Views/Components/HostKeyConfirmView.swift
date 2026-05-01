@@ -10,10 +10,10 @@ struct HostKeyConfirmView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Trust Host Key?").font(.title2).bold()
+            Text("Trust Host Key?").font(.title).bold()
             Text("Host: \(host):\(port)")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+                .font(.body)
+                .foregroundStyle(Color.primary.opacity(0.65))
 
             if let errorMessage {
                 Text(errorMessage)
@@ -21,7 +21,7 @@ struct HostKeyConfirmView: View {
             } else {
                 if keys.isEmpty {
                     Text("No host keys were found.")
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.primary.opacity(0.65))
                 } else {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Discovered keys and fingerprints:").font(.headline)
@@ -38,8 +38,8 @@ struct HostKeyConfirmView: View {
                     }
                 }
                 Text("Ensure this matches the device's displayed fingerprint.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .font(.callout)
+                    .foregroundStyle(Color.primary.opacity(0.65))
             }
 
             HStack {
