@@ -21,15 +21,9 @@ LanDeviceConnect is a SwiftUI macOS app for managing SSH-accessible devices on a
 
 SwiftUI, AppKit, Foundation, Combine, Network, and SQLite3 are provided by the macOS SDK. The default build requires no third-party SSH library.
 
-## Screenshots
-
-![LanDeviceConnect device list](Home-Page.png)
-
-![LanDeviceConnect add-device window](Device-Addition.png)
-
 ## Build and run
 
-From the repository root:
+From the `LanDeviceConnect/` directory:
 
 ```sh
 make build
@@ -39,12 +33,12 @@ make clean
 
 `make build` invokes `xcodebuild` and writes build output to `.derived/` in the current directory. `make run` builds and opens `LanDeviceConnect.app`; `make clean` removes that directory's build output.
 
-To use Xcode, open [`LanDeviceConnect/LanDeviceConnect.xcodeproj`](LanDeviceConnect/LanDeviceConnect.xcodeproj), select the **LanDeviceConnect** scheme and **My Mac** destination, choose a signing team if required, then build and run.
+To use Xcode, open [`LanDeviceConnect.xcodeproj`](LanDeviceConnect.xcodeproj), select the **LanDeviceConnect** scheme and **My Mac** destination, choose a signing team if required, then build and run.
 
 For a build without code signing:
 
 ```sh
-xcodebuild -project LanDeviceConnect/LanDeviceConnect.xcodeproj \
+xcodebuild -project LanDeviceConnect.xcodeproj \
   -scheme LanDeviceConnect \
   -configuration Debug \
   -destination 'platform=macOS' \
@@ -55,7 +49,6 @@ xcodebuild -project LanDeviceConnect/LanDeviceConnect.xcodeproj \
 To rebuild automatically when source files change, run the watcher from the application directory:
 
 ```sh
-cd LanDeviceConnect
 bash scripts/watch.sh
 ```
 
@@ -96,7 +89,7 @@ Device passwords, including remembered sudo passwords, are stored in SQLite with
 
 The icon shows an SSH terminal connected to three LAN devices, reflecting the app's device management and remote command features. It is packaged in `App/Assets.xcassets/AppIcon.appiconset` so Finder and the Dock use the same artwork.
 
-<img src="LanDeviceConnect/App/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png" alt="LanDeviceConnect app icon: SSH terminal connected to LAN devices" width="192" height="192" />
+<img src="App/Assets.xcassets/AppIcon.appiconset/icon_512x512@2x.png" alt="LanDeviceConnect app icon: SSH terminal connected to LAN devices" width="192" height="192" />
 
 The asset catalog includes all ten macOS icon slots, following [Apple's app icon asset format](https://developer.apple.com/library/archive/documentation/Xcode/Reference/xcode_ref-Asset_Catalog_Format/AppIconType.html):
 
@@ -108,7 +101,7 @@ The asset catalog includes all ten macOS icon slots, following [Apple's app icon
 | 256 × 256 | 256 × 256 | 512 × 512 |
 | 512 × 512 | 512 × 512 | 1024 × 1024 |
 
-`LDCIconGenerator.swift` is the vector artwork source. Small variants omit fine details for readability. To regenerate every PNG and the asset manifest from the repository root:
+`LDCIconGenerator.swift` is the vector artwork source. Small variants omit fine details for readability. To regenerate every PNG and the asset manifest from this directory:
 
 ```sh
 make icons
@@ -160,12 +153,8 @@ LanDeviceConnect/
     └── watch.sh
 ```
 
-The [application README](LanDeviceConnect/README.md) includes commands relative to the application directory.
-
-## Previous release
-
-The [previous release archive](https://github.com/user-attachments/files/22217615/SSHMacApp.zip) predates the rename and retains its original filename. Build from this source tree to use the current `LanDeviceConnect` project.
+The tree is shown relative to the repository root. See the [repository README](../README.md) for screenshots and the previous release.
 
 ## License
 
-See [LICENSE](LICENSE) for the GNU General Public License, version 3.
+See [LICENSE](../LICENSE) for the GNU General Public License, version 3.
