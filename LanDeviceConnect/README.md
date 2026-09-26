@@ -79,7 +79,7 @@ Status-check completion is serialized by an actor; discovery result updates and 
 3. Enter the SSH username and choose key-based or password authentication. Supply a key path or password as needed.
 4. If **Trust host key on first connect** is enabled, review the scanned fingerprints before saving.
 5. Saving a device returns to the device list in the same window. To leave without saving, use the top-left **Back to Devices** (‹) button, **Cancel**, or **Escape**.
-6. Use the device list to open Terminal, refresh status, or send shutdown and restart commands. Remote shutdown and restart require suitable sudo permissions.
+6. Use the device list to open Terminal or refresh status. The **Power Actions** icon opens a menu with **Shut Down…** and **Restart…**. Selecting either action opens a confirmation naming the device and its address; **Cancel** leaves it running. Power actions in the right-click menu require the same confirmation. Remote shutdown and restart require suitable sudo permissions.
 
 Device identification uses DNS/mDNS reverse lookups and Bonjour SSH, workstation, SMB, and device-info advertisements. Workstation, SMB, and device-info services supply metadata only; they are not added as SSH hosts. Hostname lookups have a two-second timeout and do not block the device list. Manufacturer/model values come from advertised TXT records; no vendor is guessed from an IP address, SSH software, or device name. Devices with no available name remain identified by IP. Selecting a subnet result keeps its scanned IP as the connection target, even when a reverse-DNS display name is available.
 

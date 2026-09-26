@@ -3,6 +3,7 @@ import SwiftUI
 struct LDCDeviceListView: View {
     @EnvironmentObject var repo: LDCDeviceRepository
     @State private var isAddingDevice = false
+    @State private var pendingPowerAction: LDCPowerActionRequest?
 
     var body: some View {
         Group {
@@ -21,12 +22,18 @@ struct LDCDeviceListView: View {
             header
             List {
                 ForEach(repo.devices) { device in
-                    LDCDeviceRowView(device: device)
+                    LDCDeviceRowView(device: device, onPowerAction: { action in
+                        pendingPowerAction = LDCPowerActionRequest(device: device, action: action)
+                    })
                         .environmentObject(repo)
                         .contextMenu {
                             Button("Open in Terminal") { repo.openInTerminal(device) }
-                            Button("Restart") { Task { await repo.restart(device) } }
-                            Button("Shutdown") { Task { await repo.shutdown(device) } }
+                            Button("Shut Down…", role: .destructive) {
+                                pendingPowerAction = LDCPowerActionRequest(device: device, action: .shutdown)
+                            }
+                            Button("Restart…") {
+                                pendingPowerAction = LDCPowerActionRequest(device: device, action: .restart)
+                            }
                             Divider()
                             Button(role: .destructive) { repo.remove(device) } label: { Text("Delete") }
                         }
@@ -34,6 +41,27 @@ struct LDCDeviceListView: View {
             }
         }
         .toolbar(content: toolbarContent)
+        .alert(
+            pendingPowerAction.map { "\($0.title) \($0.device.name)?" } ?? "Power Action",
+            isPresented: Binding(
+                get: { pendingPowerAction != nil },
+                set: { if !$0 { pendingPowerAction = nil } }
+            ),
+            presenting: pendingPowerAction
+        ) { request in
+            Button("Cancel", role: .cancel) { pendingPowerAction = nil }
+            Button(request.title, role: .destructive) {
+                pendingPowerAction = nil
+                Task {
+                    switch request.action {
+                    case .shutdown: await repo.shutdown(request.device)
+                    case .restart: await repo.restart(request.device)
+                    }
+                }
+            }
+        } message: { request in
+            Text("This will \(request.action == .shutdown ? "shut down" : "restart") the remote device at \(request.device.host):\(String(request.device.port)). Active sessions will disconnect.")
+        }
         .sheet(item: $repo.sudoRequest) { req in
             LDCSudoPasswordPromptView(
                 device: req.device,
@@ -56,6 +84,13 @@ struct LDCDeviceListView: View {
         }
         .padding([.top, .horizontal])
     }
+}
+
+private struct LDCPowerActionRequest {
+    let device: LDCDevice
+    let action: LDCDeviceAction
+
+    var title: String { action == .shutdown ? "Shut Down" : "Restart" }
 }
 
 private extension LDCDeviceListView {

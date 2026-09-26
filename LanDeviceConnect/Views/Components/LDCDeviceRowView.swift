@@ -3,6 +3,7 @@ import SwiftUI
 struct LDCDeviceRowView: View {
     @EnvironmentObject var repo: LDCDeviceRepository
     let device: LDCDevice
+    var onPowerAction: (LDCDeviceAction) -> Void
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -46,22 +47,29 @@ struct LDCDeviceRowView: View {
             actionButton(icon: "terminal", help: "Open in Terminal") {
                 repo.openInTerminal(device)
             }
-            actionButton(icon: "arrow.clockwise", help: "Restart via SSH") {
-                Task { await repo.restart(device) }
+            Menu {
+                Button("Shut Down…", role: .destructive) { onPowerAction(.shutdown) }
+                Button("Restart…") { onPowerAction(.restart) }
+            } label: {
+                Image(systemName: "power")
+                    .font(.system(size: 17, weight: .medium))
+                    .frame(width: 38, height: 38)
+                    .contentShape(Rectangle())
             }
-            actionButton(icon: "power", help: "Shutdown via SSH", role: .destructive) {
-                Task { await repo.shutdown(device) }
-            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .help("Power Actions")
+            .accessibilityLabel("Power actions for \(device.name)")
         }
     }
 
     private func actionButton(
         icon: String,
         help: String,
-        role: ButtonRole? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        Button(role: role) { action() } label: {
+        Button { action() } label: {
             Image(systemName: icon)
                 .font(.system(size: 17, weight: .medium))
                 .frame(width: 38, height: 38)
