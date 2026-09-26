@@ -5,7 +5,7 @@ LanDeviceConnect is a SwiftUI macOS app for managing SSH-accessible devices on a
 ## Features
 
 - Save devices with a hostname or IP address, SSH port, username, and authentication settings.
-- Discover SSH hosts through Bonjour (`_ssh._tcp.`) and TCP port 22 scans of the local IPv4 `/24` range.
+- Discover SSH hosts through Bonjour (`_ssh._tcp.`) and TCP port 22 scans of the local IPv4 `/24` range. Resolve subnet hostnames in the background and enrich matching hosts with advertised manufacturer/model details.
 - Check each saved device's configured SSH port every 15 seconds, or refresh manually.
 - Open an SSH session in Terminal and send shutdown or restart commands from the app.
 - Use SSH keys or password authentication, review scanned host-key fingerprints when adding a device, and respond to sudo password prompts.
@@ -75,16 +75,20 @@ To check for data races with Thread Sanitizer:
 bash LanDeviceConnect/scripts/test.sh --sanitize-thread
 ```
 
+Discovery tests also cover duplicate merging, metadata ordering, malformed records, and a locally published reverse-DNS record with timeout/cancellation checks.
+
 Status-check completion is serialized by an actor; discovery result updates and repository refresh state stay on the main actor. The build selects the current Mac's architecture explicitly to avoid ambiguous destinations. App Intents metadata extraction is skipped because this app defines no App Intents.
 
 ## Using the app
 
 1. Choose **Add Device** or press **Command-N** to open the Add Device page inside the current window.
-2. Select a discovered host to fill in its name, host, and port, or enter those details manually.
+2. Select a discovered host to fill in its name, host, and port, or enter those details manually. The sidebar shows the resolved name, address, and advertised manufacturer/model when available; IP and Bonjour results for the same SSH endpoint share a row.
 3. Enter the SSH username and choose key-based or password authentication. Supply a key path or password as needed.
 4. If **Trust host key on first connect** is enabled, review the scanned fingerprints before saving.
 5. Saving a device returns to the device list in the same window. To leave without saving, use the top-left **Back to Devices** (‹) button, **Cancel**, or **Escape**.
 6. Use the device list to open Terminal, refresh status, or send shutdown and restart commands. Remote shutdown and restart require suitable sudo permissions.
+
+Device identification uses DNS/mDNS reverse lookups and Bonjour SSH, workstation, SMB, and device-info advertisements. Workstation, SMB, and device-info services supply metadata only; they are not added as SSH hosts. Hostname lookups have a two-second timeout and do not block the device list. Manufacturer/model values come from advertised TXT records; no vendor is guessed from an IP address, SSH software, or device name. Devices with no available name remain identified by IP. Selecting a subnet result keeps its scanned IP as the connection target, even when a reverse-DNS display name is available.
 
 Online status means a TCP connection to the configured SSH port succeeded; it does not confirm authentication or command permissions. Subnet discovery assumes a `/24` IPv4 range and scans port 22, so add devices manually when they use other ports or networks.
 

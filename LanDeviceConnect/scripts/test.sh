@@ -21,3 +21,13 @@ xcrun swiftc "${compiler_args[@]}" \
   "$app_dir/Models/LDCDeviceStatus.swift" \
   -o "$test_temp/status-checker-tests"
 "$test_temp/status-checker-tests"
+
+xcrun swiftc "${compiler_args[@]}" -target "$(uname -m)-apple-macos13.0" \
+  "$app_dir/Tests/LDCDiscoveryTests.swift" \
+  "$app_dir/Services/LDCDiscoveryService.swift" \
+  "$app_dir/Services/LDCReverseDNSResolver.swift" \
+  "$app_dir/Services/LDCSubnetScanner.swift" \
+  "$app_dir/Services/LDCStatusChecker.swift" \
+  "$app_dir/Models/LDCDeviceStatus.swift" \
+  -o "$test_temp/discovery-tests"
+"$test_temp/discovery-tests"

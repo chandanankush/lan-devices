@@ -5,7 +5,7 @@ struct LDCAddDeviceFlowView: View {
     var onFinish: () -> Void
 
     @StateObject private var discovery = LDCDiscoveryService()
-    @State private var selected: LDCDiscoveredDevice?
+    @State private var selected: UUID?
 
     // Form state (shared with the form view via bindings)
     @State private var name: String = ""
@@ -20,6 +20,7 @@ struct LDCAddDeviceFlowView: View {
     var body: some View {
         NavigationSplitView {
             sidebar
+                .navigationSplitViewColumnWidth(min: 210, ideal: 260, max: 340)
         } detail: {
             LDCAddDeviceFormView(
                 name: $name,
@@ -61,34 +62,26 @@ struct LDCAddDeviceFlowView: View {
 
     private var filteredDiscoveredDevices: [LDCDiscoveredDevice] {
         let existing = Set(repo.devices.map { "\(normalizeHost($0.host)):\($0.port)" })
-        return discovery.devices.filter { !existing.contains("\(normalizeHost($0.host)):\($0.port)") }
+        return discovery.devices.filter { device in
+            !device.endpoints.contains { existing.contains("\($0):\(device.port)") }
+        }
     }
 
     private var sidebar: some View {
         List(selection: $selected) {
             Section("Discovered on LAN") {
                 ForEach(filteredDiscoveredDevices) { item in
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(item.name.isEmpty ? hostDisplay(item.host) : item.name)
-                            .font(.headline)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                        HStack(spacing: 6) {
-                            Text("\(hostDisplay(item.host)):\(item.port)")
-                            if let ip = item.ip, ip != hostDisplay(item.host) { Text("• \(ip)") }
-                            Text("• \(item.source == .bonjour ? "Bonjour" : "Subnet")")
-                            if let ms = item.latencyMs { Text("• ~\(ms) ms") }
+                    LDCDiscoveredDeviceRow(item: item)
+                        .tag(item.id as UUID?)
+                        .onTapGesture {
+                            prefill(with: item)
                         }
-                        .font(.subheadline)
-                        .foregroundStyle(Color.primary.opacity(0.65))
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                    }
-                    .tag(item as LDCDiscoveredDevice?)
-                    .onTapGesture {
-                        prefill(with: item)
-                    }
                 }
+            }
+        }
+        .onChange(of: selected) { id in
+            if let item = filteredDiscoveredDevices.first(where: { $0.id == id }) {
+                prefill(with: item)
             }
         }
         .toolbar {
@@ -115,4 +108,43 @@ struct LDCAddDeviceFlowView: View {
 
 private func hostDisplay(_ host: String) -> String {
     host.hasSuffix(".") ? String(host.dropLast()) : host
+}
+
+struct LDCDiscoveredDeviceRow: View {
+    let item: LDCDiscoveredDevice
+
+    private var identification: String {
+        [item.manufacturer, item.model].compactMap { $0 }.joined(separator: " · ")
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(item.name.isEmpty ? hostDisplay(item.host) : item.name)
+                .font(.headline)
+                .lineLimit(2)
+            if !identification.isEmpty {
+                Text(identification)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+            Text("\(hostDisplay(item.host)):\(item.port)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+            if let ip = item.ip, ip != hostDisplay(item.host) {
+                Text(ip).font(.caption).foregroundStyle(.secondary)
+            }
+            HStack(spacing: 6) {
+                Text(item.source == .bonjour ? "Bonjour" : "Subnet")
+                if let ms = item.latencyMs { Text("~\(ms) ms") }
+            }
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 3)
+        .help([item.name, identification, "\(hostDisplay(item.host)):\(item.port)", item.ip ?? ""]
+            .filter { !$0.isEmpty }.joined(separator: "\n"))
+    }
 }

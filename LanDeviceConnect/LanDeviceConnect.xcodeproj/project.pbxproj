@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C0DEC0DE0000000000000003 /* LDCReverseDNSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DEC0DE0000000000000004 /* LDCReverseDNSResolver.swift */; };
 		C0DEC0DE0000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0DEC0DE0000000000000002 /* Assets.xcassets */; };
 		A1B2C3D4E5F6010000000200 /* LDCLanDeviceConnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6010000000100 /* LDCLanDeviceConnectApp.swift */; };
 		A1B2C3D4E5F6010000000201 /* LDCDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6010000000110 /* LDCDevice.swift */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C0DEC0DE0000000000000004 /* LDCReverseDNSResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LDCReverseDNSResolver.swift; sourceTree = "<group>"; };
 		C0DEC0DE0000000000000002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1B2C3D4E5F6010000000003 /* LanDeviceConnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LanDeviceConnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F6010000000100 /* LDCLanDeviceConnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LDCLanDeviceConnectApp.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				A1B2C3D4E5F6010000000154 /* LDCExpectSSHClient.swift */,
 				A1B2C3D4E5F6010000000123 /* LDCTerminalLauncher.swift */,
 				A1B2C3D4E5F6010000000124 /* LDCDiscoveryService.swift */,
+				C0DEC0DE0000000000000004 /* LDCReverseDNSResolver.swift */,
 				A1B2C3D4E5F6010000000152 /* LDCHostKeyService.swift */,
 				A1B2C3D4E5F6010000000155 /* LDCSubnetScanner.swift */,
 			);
@@ -249,6 +252,7 @@
 				A1B2C3D4E5F6010000000205 /* LDCSSHClient.swift in Sources */,
 				A1B2C3D4E5F6010000000206 /* LDCTerminalLauncher.swift in Sources */,
 				A1B2C3D4E5F6010000000207 /* LDCDiscoveryService.swift in Sources */,
+				C0DEC0DE0000000000000003 /* LDCReverseDNSResolver.swift in Sources */,
 				A1B2C3D4E5F6010000000208 /* LDCDeviceRepository.swift in Sources */,
 				A1B2C3D4E5F6010000000209 /* LDCDeviceListView.swift in Sources */,
 				A1B2C3D4E5F6010000000210 /* LDCAddDeviceView.swift in Sources */,

@@ -89,24 +89,7 @@ struct LDCAddDeviceView: View {
 
     private var discoveryList: some View {
         List(discovery.devices) { item in
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.name.isEmpty ? hostDisplay(item.host) : item.name)
-                    .font(.body)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                HStack(spacing: 6) {
-                    Text("\(hostDisplay(item.host)):\(item.port)")
-                    if let ip = item.ip, ip != hostDisplay(item.host) {
-                        Text("• \(ip)")
-                    }
-                    Text("• \(item.source == .bonjour ? "Bonjour" : "Subnet")")
-                    if let ms = item.latencyMs { Text("• ~\(ms) ms") }
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .truncationMode(.middle)
-            }
+            LDCDiscoveredDeviceRow(item: item)
             .contentShape(Rectangle())
             .onTapGesture {
                 self.name = item.name.isEmpty ? hostDisplay(item.host) : item.name
