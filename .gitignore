@@ -75,3 +75,42 @@ playground.xcworkspace
 
 # Build outputs
 build/
+
+# Generated app builds and symbols
+.derived/
+*.dSYM/
+
+# Local credentials and signing material
+.env
+.env.*
+!.env.example
+!.env.sample
+.ssh/
+id_rsa
+id_ed25519
+id_ecdsa
+id_dsa
+known_hosts
+authorized_keys
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.jks
+*.mobileprovision
+
+# Local device databases, journals, and security reports
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+.security-reports/
+gitleaks-report*.json
+
+# Legacy screenshots retained locally; do not republish real device identities
+/Home-Page.png
+/Device-Addition.png
