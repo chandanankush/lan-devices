@@ -9,16 +9,18 @@ struct LDCLanDeviceConnectApp: App {
             LDCDeviceListView()
                 .environmentObject(repo)
         }
-        WindowGroup("Add Device", id: "add-device") {
-            LDCAddDeviceFlowView()
-                .environmentObject(repo)
-        }
-        .commands {
-            CommandGroup(replacing: .newItem) {
-                Button("Add Device") {
-                    repo.showAddDeviceSheet.toggle()
-                }.keyboardShortcut("n")
-            }
+        .commands { LDCDeviceCommands() }
+    }
+}
+
+private struct LDCDeviceCommands: Commands {
+    @FocusedBinding(\.isAddingDevice) private var isAddingDevice: Bool?
+
+    var body: some Commands {
+        CommandGroup(replacing: .newItem) {
+            Button("Add Device") { isAddingDevice = true }
+                .keyboardShortcut("n")
+                .disabled(isAddingDevice == nil || isAddingDevice == true)
         }
     }
 }

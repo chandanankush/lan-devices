@@ -2,9 +2,21 @@ import SwiftUI
 
 struct LDCDeviceListView: View {
     @EnvironmentObject var repo: LDCDeviceRepository
-    @Environment(\.openWindow) private var openWindow
+    @State private var isAddingDevice = false
 
     var body: some View {
+        Group {
+            if isAddingDevice {
+                LDCAddDeviceFlowView(onFinish: { isAddingDevice = false })
+            } else {
+                deviceList
+            }
+        }
+        .frame(minWidth: 720, minHeight: 440)
+        .focusedSceneValue(\.isAddingDevice, $isAddingDevice)
+    }
+
+    private var deviceList: some View {
         VStack(spacing: 0) {
             header
             List {
@@ -32,9 +44,7 @@ struct LDCDeviceListView: View {
                 onCancel: { repo.sudoRequest = nil }
             )
         }
-        .onChange(of: repo.showAddDeviceSheet) { newValue in
-            if newValue { openWindow(id: "add-device"); repo.showAddDeviceSheet = false }
-        }
+        .navigationTitle("Devices")
         .onAppear { repo.refreshStatuses() }
     }
 
@@ -52,12 +62,25 @@ private extension LDCDeviceListView {
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
         SwiftUI.ToolbarItem(placement: .automatic) {
-            Button { openWindow(id: "add-device") } label: { Image(systemName: "plus") }
+            Button { isAddingDevice = true } label: { Image(systemName: "plus") }
                 .help("Add Device")
+                .accessibilityLabel("Add Device")
         }
         SwiftUI.ToolbarItem(placement: .automatic) {
             Button { repo.refreshStatuses() } label: { Image(systemName: "arrow.clockwise") }
                 .help("Refresh Status")
         }
+    }
+}
+
+// Command-N routes within the focused scene rather than changing every open window.
+private struct LDCAddDeviceFocusKey: FocusedValueKey {
+    typealias Value = Binding<Bool>
+}
+
+extension FocusedValues {
+    var isAddingDevice: Binding<Bool>? {
+        get { self[LDCAddDeviceFocusKey.self] }
+        set { self[LDCAddDeviceFocusKey.self] = newValue }
     }
 }

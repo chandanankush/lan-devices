@@ -1,11 +1,9 @@
 import SwiftUI
-import AppKit
 
 struct LDCAddDeviceFlowView: View {
     @EnvironmentObject var repo: LDCDeviceRepository
-    @Environment(\.dismiss) private var dismiss
+    var onFinish: () -> Void
 
-    @State private var windowReference = LDCAddDeviceWindowReference()
     @StateObject private var discovery = LDCDiscoveryService()
     @State private var selected: LDCDiscoveredDevice?
 
@@ -34,21 +32,20 @@ struct LDCAddDeviceFlowView: View {
                 acceptNewHostKey: $acceptNewHostKey,
                 onSave: { newDevice in
                     repo.add(newDevice)
-                    closeWindow()
+                    returnToDevices()
                 },
-                onCancel: closeWindow
+                onCancel: returnToDevices
             )
             .padding(.horizontal)
         }
-        .background(LDCAddDeviceWindowAccessor(reference: windowReference).frame(width: 0, height: 0))
         .navigationTitle("Add Device")
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: closeWindow) {
-                    Image(systemName: "xmark")
+            ToolbarItem(placement: .navigation) {
+                Button(action: returnToDevices) {
+                    Label("Devices", systemImage: "chevron.left")
                 }
-                .help("Close Add Device")
-                .accessibilityLabel("Close Add Device")
+                .help("Back to Devices")
+                .accessibilityLabel("Back to Devices")
                 .keyboardShortcut(.cancelAction)
             }
         }
@@ -57,14 +54,9 @@ struct LDCAddDeviceFlowView: View {
         .onDisappear { discovery.stop() }
     }
 
-    private func closeWindow() {
+    private func returnToDevices() {
         discovery.stop()
-        if let window = windowReference.window {
-            // Allow any host-key sheet to finish its dismissal before closing its owner.
-            DispatchQueue.main.async { [weak window] in window?.performClose(nil) }
-        } else {
-            dismiss()
-        }
+        onFinish()
     }
 
     private var filteredDiscoveredDevices: [LDCDiscoveredDevice] {
@@ -123,35 +115,4 @@ struct LDCAddDeviceFlowView: View {
 
 private func hostDisplay(_ host: String) -> String {
     host.hasSuffix(".") ? String(host.dropLast()) : host
-}
-
-// Resolve this window specifically; the key window may be the host-key confirmation sheet.
-private final class LDCAddDeviceWindowReference {
-    weak var window: NSWindow?
-}
-
-private struct LDCAddDeviceWindowAccessor: NSViewRepresentable {
-    let reference: LDCAddDeviceWindowReference
-
-    func makeNSView(context: Context) -> LDCAddDeviceWindowObserver {
-        LDCAddDeviceWindowObserver(reference: reference)
-    }
-
-    func updateNSView(_ view: LDCAddDeviceWindowObserver, context: Context) {}
-}
-
-private final class LDCAddDeviceWindowObserver: NSView {
-    private let reference: LDCAddDeviceWindowReference
-
-    init(reference: LDCAddDeviceWindowReference) {
-        self.reference = reference
-        super.init(frame: .zero)
-    }
-
-    required init?(coder: NSCoder) { fatalError("init(coder:) is unavailable") }
-
-    override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow()
-        reference.window = window
-    }
 }

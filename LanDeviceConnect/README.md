@@ -72,11 +72,11 @@ Status-check completion is serialized by an actor; discovery result updates and 
 
 ## Using the app
 
-1. Choose **Add Device** or press **Command-N**.
+1. Choose **Add Device** or press **Command-N** to open the Add Device page inside the current window.
 2. Select a discovered host to fill in its name, host, and port, or enter those details manually.
 3. Enter the SSH username and choose key-based or password authentication. Supply a key path or password as needed.
 4. If **Trust host key on first connect** is enabled, review the scanned fingerprints before saving.
-5. Saving a device closes the Add Device window and returns to the device list. To leave without saving, use the top-right **Close** (×) button, **Cancel**, or **Escape**.
+5. Saving a device returns to the device list in the same window. To leave without saving, use the top-left **Back to Devices** (‹) button, **Cancel**, or **Escape**.
 6. Use the device list to open Terminal, refresh status, or send shutdown and restart commands. Remote shutdown and restart require suitable sudo permissions.
 
 Online status means a TCP connection to the configured SSH port succeeded; it does not confirm authentication or command permissions. Subnet discovery assumes a `/24` IPv4 range and scans port 22, so add devices manually when they use other ports or networks.

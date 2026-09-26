@@ -121,7 +121,7 @@ struct LDCAddDeviceFormView: View {
         )
     }
 
-    // Close the containing window only after its confirmation sheet has dismissed.
+    // Return to the device list only after the confirmation sheet has dismissed.
     private func saveConfirmedDevice() {
         guard let device = confirmedDevice else { return }
         confirmedDevice = nil

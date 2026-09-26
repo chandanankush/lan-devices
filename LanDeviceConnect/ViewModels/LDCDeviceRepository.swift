@@ -5,7 +5,6 @@ import Combine
 final class LDCDeviceRepository: ObservableObject {
     @Published private(set) var devices: [LDCDevice] = []
     @Published var isRefreshing = false
-    @Published var showAddDeviceSheet = false
     @Published var sudoRequest: LDCSudoRequest?
 
     private let store = LDCDeviceStore.shared
