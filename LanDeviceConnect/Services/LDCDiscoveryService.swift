@@ -51,18 +51,16 @@ final class LDCDiscoveryService: NSObject, ObservableObject {
         isScanning = true
         let scanner = LDCSubnetScanner()
         scanTask?.cancel()
-        scanTask = Task { [weak self] in
+        scanTask = Task { @MainActor [weak self] in
             let results = await scanner.scanSSH()
-            await MainActor.run {
-                guard let self else { return }
-                // Merge results with existing devices, de-duping by host:port
-                for r in results {
-                    if self.devices.contains(where: { $0.host == r.host && $0.port == r.port }) == false {
-                        self.devices.append(r)
-                    }
+            guard !Task.isCancelled, let self else { return }
+            // Merge results with existing devices, de-duping by host:port.
+            for result in results {
+                if !self.devices.contains(where: { $0.host == result.host && $0.port == result.port }) {
+                    self.devices.append(result)
                 }
-                self.isScanning = false
             }
+            self.isScanning = false
         }
     }
 

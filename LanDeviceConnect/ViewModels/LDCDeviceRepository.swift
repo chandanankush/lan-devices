@@ -84,23 +84,17 @@ final class LDCDeviceRepository: ObservableObject {
     func refreshStatuses() {
         guard !isRefreshing else { return }
         isRefreshing = true
-        // Snapshot devices on MainActor to avoid cross-actor access in detached task
-        let snapshot = self.devices
-        Task.detached { [weak self, snapshot] in
-            guard let self = self else { return }
-            var updated: [LDCDevice] = []
-            for var d in snapshot {
-                let status = await LDCStatusChecker.check(host: d.host, port: d.port)
-                d.status = status
-                await MainActor.run {
-                    self.store.updateStatus(id: d.id, status: status)
-                }
-                updated.append(d)
+        let snapshot = devices
+        // Inherit MainActor for UI/SQLite updates; the asynchronous probe yields while waiting.
+        Task { [weak self, snapshot] in
+            guard let self else { return }
+            defer { self.isRefreshing = false }
+            for device in snapshot {
+                let status = await LDCStatusChecker.check(host: device.host, port: device.port)
+                self.store.updateStatus(id: device.id, status: status)
             }
-            await MainActor.run {
-                self.devices = updated
-                self.isRefreshing = false
-            }
+            // Read the current records so additions/removals during a refresh remain visible.
+            self.reload()
         }
     }
 
@@ -109,7 +103,7 @@ final class LDCDeviceRepository: ObservableObject {
         statusTask = Task { [weak self] in
             guard let self = self else { return }
             while !Task.isCancelled {
-                await MainActor.run { self.refreshStatuses() }
+                self.refreshStatuses()
                 try? await Task.sleep(nanoseconds: UInt64(statusInterval * 1_000_000_000))
             }
         }

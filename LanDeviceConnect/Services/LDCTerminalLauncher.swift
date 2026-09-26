@@ -19,7 +19,13 @@ enum LDCTerminalLauncher {
             if let err = err { print("[LDCTerminalLauncher] AppleScript error: \(err)") }
         } else {
             // Fallback: open Terminal app (without running the command)
-            NSWorkspace.shared.launchApplication("Terminal")
+            guard let terminalURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.Terminal") else {
+                print("[LDCTerminalLauncher] Terminal application was not found")
+                return
+            }
+            NSWorkspace.shared.openApplication(at: terminalURL, configuration: NSWorkspace.OpenConfiguration()) { _, error in
+                if let error { print("[LDCTerminalLauncher] Failed to open Terminal: \(error)") }
+            }
         }
     }
 }

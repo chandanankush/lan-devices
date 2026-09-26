@@ -41,7 +41,7 @@ For a build without code signing:
 xcodebuild -project LanDeviceConnect.xcodeproj \
   -scheme LanDeviceConnect \
   -configuration Debug \
-  -destination 'platform=macOS' \
+  -destination "platform=macOS,arch=$(uname -m)" \
   -derivedDataPath .derived \
   build CODE_SIGNING_ALLOWED=NO
 ```
@@ -51,6 +51,24 @@ To rebuild automatically when source files change, run the watcher from the appl
 ```sh
 bash scripts/watch.sh
 ```
+
+## Verification
+
+Run the regression checks from this directory:
+
+```sh
+make test
+```
+
+Tests compile with warnings treated as errors and check reachable/refused local TCP connections, 200 simultaneous connection/timeout races, invalid ports, and device additions/removals during a status refresh. Repository tests use an in-memory database fixture and do not access saved devices or credentials.
+
+To check for data races with Thread Sanitizer:
+
+```sh
+bash scripts/test.sh --sanitize-thread
+```
+
+Status-check completion is serialized by an actor; discovery result updates and repository refresh state stay on the main actor. The build selects the current Mac's architecture explicitly to avoid ambiguous destinations. App Intents metadata extraction is skipped because this app defines no App Intents.
 
 ## Using the app
 
@@ -144,12 +162,17 @@ LanDeviceConnect/
 │       ├── LDCHostKeyConfirmView.swift
 │       ├── LDCStatusDot.swift
 │       └── LDCSudoPasswordPromptView.swift
+├── Tests/
+│   ├── LDCStatusCheckerTests.swift
+│   └── Fixtures/
+│       └── LDCInMemoryDeviceStore.swift
 ├── LDCIconGenerator.swift
 ├── Makefile
 ├── README.md
 └── scripts/
     ├── generate-icons.sh
     ├── generate-icons.swift
+    ├── test.sh
     └── watch.sh
 ```
 

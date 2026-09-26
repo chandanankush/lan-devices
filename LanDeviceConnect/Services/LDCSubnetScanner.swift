@@ -15,7 +15,7 @@ final class LDCSubnetScanner {
             guard let sa = ifa.ifa_addr else { break }
             if sa.pointee.sa_family == UInt8(AF_INET) {
                 let name = String(cString: ifa.ifa_name)
-                var addr_in = UnsafePointer<sockaddr_in>(OpaquePointer(ifa.ifa_addr)).pointee
+                let addr_in = UnsafePointer<sockaddr_in>(OpaquePointer(ifa.ifa_addr)).pointee
                 let ip = String(cString: inet_ntoa(addr_in.sin_addr))
                 if name.hasPrefix("en"), !ip.hasPrefix("169.254.") {
                     return ip

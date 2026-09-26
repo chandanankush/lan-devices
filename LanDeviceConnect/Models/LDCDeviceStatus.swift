@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-enum LDCDeviceStatus: Int, Codable, CaseIterable {
+enum LDCDeviceStatus: Int, Codable, CaseIterable, Sendable {
     case unknown = 0
     case reachable = 1
     case unreachable = 2

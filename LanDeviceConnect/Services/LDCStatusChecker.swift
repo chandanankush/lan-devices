@@ -7,39 +7,46 @@ enum LDCStatusCheckError: Error {
 
 final class LDCStatusChecker {
     static func check(host: String, port: Int = 22, timeout: TimeInterval = 2.5) async -> LDCDeviceStatus {
-        await withCheckedContinuation { cont in
-            let params = NWParameters.tcp
-            guard let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) else {
-                cont.resume(returning: .unreachable)
-                return
-            }
+        guard let rawPort = UInt16(exactly: port), rawPort > 0,
+              let nwPort = NWEndpoint.Port(rawValue: rawPort) else {
+            return .unreachable
+        }
+        return await withCheckedContinuation { continuation in
             let endpoint = NWEndpoint.hostPort(host: NWEndpoint.Host(host), port: nwPort)
-            let conn = NWConnection(to: endpoint, using: params)
-
-            var completed = false
+            let connection = NWConnection(to: endpoint, using: .tcp)
+            let completion = LDCStatusCheckCompletion(continuation: continuation)
             let queue = DispatchQueue.global(qos: .utility)
-            conn.stateUpdateHandler = { state in
+
+            connection.stateUpdateHandler = { state in
+                let status: LDCDeviceStatus
                 switch state {
-                case .ready:
-                    if !completed { completed = true; conn.cancel(); cont.resume(returning: .reachable) }
-                case .failed(_):
-                    if !completed { completed = true; conn.cancel(); cont.resume(returning: .unreachable) }
-                case .cancelled:
-                    if !completed { completed = true; cont.resume(returning: .unreachable) }
-                default:
-                    break
+                case .ready: status = .reachable
+                case .failed, .cancelled: status = .unreachable
+                default: return
                 }
+                Task { await completion.finish(status: status, connection: connection) }
             }
-
-            conn.start(queue: queue)
-
+            connection.start(queue: queue)
             queue.asyncAfter(deadline: .now() + timeout) {
-                if !completed {
-                    completed = true
-                    conn.cancel()
-                    cont.resume(returning: .unreachable)
-                }
+                Task { await completion.finish(status: .unreachable, connection: connection) }
             }
         }
+    }
+}
+
+/// Serializes ready, failure, cancellation, and timeout so the continuation resumes once.
+private actor LDCStatusCheckCompletion {
+    private var continuation: CheckedContinuation<LDCDeviceStatus, Never>?
+
+    init(continuation: CheckedContinuation<LDCDeviceStatus, Never>) {
+        self.continuation = continuation
+    }
+
+    func finish(status: LDCDeviceStatus, connection: NWConnection) {
+        guard let continuation else { return }
+        self.continuation = nil
+        connection.stateUpdateHandler = nil
+        connection.cancel()
+        continuation.resume(returning: status)
     }
 }
