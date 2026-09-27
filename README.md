@@ -13,10 +13,14 @@ Manage SSH devices on your local network from one macOS app. For home-lab users 
 
 ## Get started
 
-You need macOS 14 or later, Xcode to build the app, and a remote device with SSH enabled. No packaged GitHub release is currently published; build from source. See [command-line builds](docs/development.md#build-and-run) for an unsigned local build. A local build is not a notarized distribution.
+You need macOS 14 or later and a remote device with SSH enabled.
 
-1. Open [LanDeviceConnect.xcodeproj](LanDeviceConnect/LanDeviceConnect.xcodeproj) in Xcode.
-2. Select the **LanDeviceConnect** scheme and **My Mac**, then run the app. Choose a signing team if Xcode requests one.
+**Download:** get `LanDeviceConnect-<version>.zip` from the [latest release](https://github.com/chandanankush/lan-devices/releases/latest), unzip it, and move the app to Applications. Release builds are ad-hoc signed and **not notarized**, so macOS blocks the first launch. On macOS 14, Control-click the app and choose **Open**; on macOS 15 or later, try to open it once, then click **Open Anyway** in **System Settings › Privacy & Security**. Alternatively, run `xattr -dr com.apple.quarantine /Applications/LanDeviceConnect.app`. Check the download against the `.sha256` file published with the release.
+
+**Build from source:** you need Xcode. See [command-line builds](docs/development.md#build-and-run) for an unsigned local build. A local build is not a notarized distribution.
+
+1. Launch the downloaded app, or open [LanDeviceConnect.xcodeproj](LanDeviceConnect/LanDeviceConnect.xcodeproj) in Xcode.
+2. If building, select the **LanDeviceConnect** scheme and **My Mac**, then run the app. Choose a signing team if Xcode requests one.
 3. Click **+** or press **Command-N** to add a device.
 4. Select a discovered device or enter its address, then supply your SSH username and authentication settings.
 5. Click **Save** to return to your device list.
