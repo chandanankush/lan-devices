@@ -13,7 +13,7 @@ Manage SSH devices on your local network from one macOS app. For home-lab users 
 
 ## Get started
 
-You need macOS 13 or later, Xcode to build the app, and a remote device with SSH enabled. No packaged GitHub release is currently published; build from source. See [command-line builds](docs/development.md#build-and-run) for an unsigned local build. A local build is not a notarized distribution.
+You need macOS 14 or later, Xcode to build the app, and a remote device with SSH enabled. No packaged GitHub release is currently published; build from source. See [command-line builds](docs/development.md#build-and-run) for an unsigned local build. A local build is not a notarized distribution.
 
 1. Open [LanDeviceConnect.xcodeproj](LanDeviceConnect/LanDeviceConnect.xcodeproj) in Xcode.
 2. Select the **LanDeviceConnect** scheme and **My Mac**, then run the app. Choose a signing team if Xcode requests one.

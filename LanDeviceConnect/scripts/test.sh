@@ -22,7 +22,7 @@ xcrun swiftc "${compiler_args[@]}" \
   -o "$test_temp/status-checker-tests"
 "$test_temp/status-checker-tests"
 
-xcrun swiftc "${compiler_args[@]}" -target "$(uname -m)-apple-macos13.0" \
+xcrun swiftc "${compiler_args[@]}" -target "$(uname -m)-apple-macos14.0" \
   "$app_dir/Tests/LDCDiscoveryTests.swift" \
   "$app_dir/Services/LDCDiscoveryService.swift" \
   "$app_dir/Services/LDCReverseDNSResolver.swift" \

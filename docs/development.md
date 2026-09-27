@@ -5,7 +5,7 @@ Commands on this page run from the repository root unless stated otherwise.
 ## Requirements
 
 - Xcode and its macOS command-line tools, selected for `xcodebuild`.
-- The shared project targets macOS 13 or later. Local Xcode upgrades can change that target; check the target before distributing a build.
+- The shared project targets macOS 14 or later, pinned explicitly as `MACOSX_DEPLOYMENT_TARGET = 14.0`. If a local Xcode upgrade changes it (for example, to `$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)`), restore the explicit value before committing.
 - `/usr/bin/ssh` and `/usr/bin/ssh-keyscan` for the system SSH implementation.
 - `/usr/bin/expect` for password-based remote commands in the default build. Verify that it exists on the target Mac.
 
@@ -32,7 +32,7 @@ xcodebuild -project LanDeviceConnect/LanDeviceConnect.xcodeproj \
   -configuration Debug \
   -destination "platform=macOS,arch=$(uname -m)" \
   -derivedDataPath .derived \
-  build MACOSX_DEPLOYMENT_TARGET=13.0 CODE_SIGNING_ALLOWED=NO
+  build MACOSX_DEPLOYMENT_TARGET=14.0 CODE_SIGNING_ALLOWED=NO
 ```
 
 This override keeps verification on the documented minimum target even if local Xcode settings were upgraded. It does not establish runtime compatibility on every macOS version. For release validation, repeat the command with `-configuration Release` and test the resulting app on supported Macs.
